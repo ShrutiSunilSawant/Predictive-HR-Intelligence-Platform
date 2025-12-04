@@ -1,0 +1,137 @@
+:root {
+    --primary-bg: #1e2b3c;
+    --secondary-bg: #253449;
+    --card-bg: #2d3c50;
+    --text-primary: #ffffff;
+    --text-secondary: #9ba5b1;
+    --accent-blue: #4f6fa9;
+    --accent-green: #5a8f6f;
+    --accent-yellow: #c9a96a;
+    --accent-red: #b76e79;
+    --card-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    --border-radius: 12px;
+}
+
+/* BASE PAGE */
+body {
+    background-color: var(--primary-bg);
+    color: var(--text-primary);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* SIDEBAR */
+.sidebar {
+    background-color: var(--secondary-bg);
+    border-right: 1px solid rgba(255,255,255,0.1);
+}
+
+.sidebar .nav-link {
+    color: var(--text-secondary);
+    padding: 0.8rem 1.2rem;
+    font-size: 0.95rem;
+    transition: 0.2s;
+}
+
+.sidebar .nav-link:hover {
+    color: var(--text-primary);
+    background: rgba(255,255,255,0.1);
+}
+
+.sidebar .nav-link.active {
+    color: var(--accent-blue);
+    font-weight: 600;
+    background: rgba(79,111,169,0.12);
+    border-left: 3px solid var(--accent-blue);
+}
+
+/* KPI CARDS */
+.kpi-card {
+    background: var(--card-bg);
+    padding: 1.3rem 1.2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    transition: 0.2s;
+}
+
+.kpi-card:hover {
+    transform: translateY(-3px);
+}
+
+.kpi-card h5 {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+}
+
+.kpi-card.blue { border-left: 4px solid var(--accent-blue); }
+.kpi-card.green { border-left: 4px solid var(--accent-green); }
+.kpi-card.yellow { border-left: 4px solid var(--accent-yellow); }
+.kpi-card.red { border-left: 4px solid var(--accent-red); }
+
+/* CHART CONTAINERS */
+.chart-container {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    padding-bottom: 25px !important;
+}
+
+.chart-container h5 {
+    margin-bottom: 12px !important;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding-bottom: 8px;
+    font-size: 1.1rem;
+}
+
+/* Make Plotly charts expand correctly */
+.chart-container > div {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Remove buggy old .chart-box completely */
+.chart-box {
+    height: 420px !important;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+.chart-card {
+    background: #1e2b3c;
+    padding: 20px;
+    border-radius: 14px;
+    height: 480px;    
+}
+
+.chart-title {
+    margin-bottom: 10px;
+    font-size: 20px;
+}
+
+/* TABLES / BADGES / PROGRESS */
+.table {
+    color: var(--text-primary);
+}
+
+.table thead th {
+    background: rgba(255,255,255,0.1);
+    color: var(--text-secondary);
+    border-color: rgba(255,255,255,0.05);
+    text-transform: uppercase;
+}
+
+.table td {
+    border-color: rgba(255,255,255,0.06);
+}
+
+.badge-success { background: var(--accent-green); }
+.badge-warning { background: var(--accent-yellow); }
+.badge-danger { background: var(--accent-red); }
+
+/* Progress bar */
+.progress {
+    background: rgba(255,255,255,0.1);
+    height: 8px;
+}
