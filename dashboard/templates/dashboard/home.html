@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% load static %}
+{% load dashboard_filters %}
+
+{% block title %}HR Analytics Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+
+    <h1 class="mb-1">HR Analytics Overview</h1>
+    <p class="text-muted mb-4">Real-time insights into workforce performance</p>
+
+    <!-- QUICK STATS -->
+    <div class="row mb-4">
+
+        <div class="col-md-3 mb-4">
+            <div class="kpi-card blue">
+                <h5>Employees</h5>
+                <h2 class="display-4">{{ employee_count }}</h2>
+                <p>Across {{ departments }} departments</p>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-4">
+            <div class="kpi-card green">
+                <h5>Avg Satisfaction</h5>
+                <h2 class="display-4">{{ avg_satisfaction }}</h2>
+                <p>Out of 5.0</p>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-4">
+            <div class="kpi-card yellow">
+                <h5>Active Projects</h5>
+                <h2 class="display-4">{{ active_projects }}</h2>
+                <p>In progress</p>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-4">
+            <div class="kpi-card red">
+                <h5>Attrition Risk</h5>
+                <h2 class="display-4">{{ high_risk_pct|default:"15" }}%</h2>
+                <p>Of workforce at high risk</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- NAVIGATION CARDS -->
+    <div class="row mb-4">
+
+        <!-- Productivity -->
+        <div class="col-md-4 mb-4">
+            <div class="chart-container text-center">
+                <h5>Productivity Insights</h5>
+                <i class="fas fa-chart-line fa-4x text-primary mb-3"></i>
+                <p>Analyze workload, hours logged, and productivity trends.</p>
+                <a href="{% url 'productivity_dashboard' %}" class="btn btn-outline-primary mt-2">
+                    View Dashboard
+                </a>
+            </div>
+        </div>
+
+        <!-- Engagement -->
+        <div class="col-md-4 mb-4">
+            <div class="chart-container text-center">
+                <h5>Employee Engagement</h5>
+                <i class="fas fa-heart fa-4x text-success mb-3"></i>
+                <p>Explore employee satisfaction and survey results.</p>
+                <a href="{% url 'engagement_dashboard' %}" class="btn btn-outline-success mt-2">
+                    View Dashboard
+                </a>
+            </div>
+        </div>
+
+        <!-- Attrition -->
+        <div class="col-md-4 mb-4">
+            <div class="chart-container text-center">
+                <h5>Attrition Risk Analysis</h5>
+                <i class="fas fa-user-minus fa-4x text-danger mb-3"></i>
+                <p>Identify high-risk employees and retention trends.</p>
+                <a href="{% url 'attrition_dashboard' %}" class="btn btn-outline-danger mt-2">
+                    View Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
