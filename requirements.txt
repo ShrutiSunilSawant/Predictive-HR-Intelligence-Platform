@@ -1,0 +1,12 @@
+django
+numpy
+pandas
+scikit-learn
+matplotlib
+seaborn
+pymongo
+psycopg2-binary
+sqlalchemy
+django-crispy-forms
+python-dateutil
+plotly
