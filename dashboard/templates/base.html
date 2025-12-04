@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% block title %}HR Analytics Platform{% endblock %}</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+    <!-- Custom Dashboard CSS -->
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <style>
+    body {
+        background: red !important;
+    }
+</style>
+
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body class="bg-dark">
+
+<div class="container-fluid">
+    <div class="row">
+
+        <!-- SIDEBAR (Hidden on login/signup) -->
+        {% if 'login' not in request.path and 'signup' not in request.path %}
+        <nav class="col-md-2 d-none d-md-block sidebar bg-dark pt-4"
+             style="min-height: 100vh; border-right: 1px solid rgba(255,255,255,0.08);">
+
+            <div class="sidebar-sticky">
+
+                <!-- Branding -->
+                <div class="text-center mb-4">
+                    <h4 class="text-white mb-1">HR Analytics</h4>
+                    <p class="text-muted small">Data-Driven Insights</p>
+                </div>
+
+                <!-- Main Navigation -->
+                <ul class="nav flex-column">
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/' %}active{% endif %}"
+                           href="{% url 'dashboard_home' %}">
+                            <i class="fas fa-tachometer-alt mr-2"></i> Overview
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'productivity' in request.path %}active{% endif %}"
+                           href="{% url 'productivity_dashboard' %}">
+                            <i class="fas fa-chart-line mr-2"></i> Productivity
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'engagement' in request.path %}active{% endif %}"
+                           href="{% url 'engagement_dashboard' %}">
+                            <i class="fas fa-heart mr-2"></i> Engagement
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'attrition' in request.path %}active{% endif %}"
+                           href="{% url 'attrition_dashboard' %}">
+                            <i class="fas fa-user-minus mr-2"></i> Attrition Risk
+                        </a>
+                    </li>
+
+                </ul>
+
+                {% comment %} <!-- Sub-section -->
+                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                    <span>Data Management</span>
+                </h6>
+
+                <ul class="nav flex-column mb-2">
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'run-etl' in request.path %}active{% endif %}"
+                           href="{% url 'run_etl' %}">
+                            <i class="fas fa-sync mr-2"></i> Run ETL Pipeline
+                        </a>
+                    </li>
+                </ul> {% endcomment %}
+
+                <li class="nav-item mt-4">
+                    <a class="nav-link text-danger" href="{% url 'logout' %}">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Sign Out
+                    </a>
+                </li>
+
+            </div>
+        </nav>
+        {% endif %}
+
+        <!-- MAIN CONTENT AREA -->
+        <main role="main"
+              class="
+                {% if 'login' not in request.path and 'signup' not in request.path %}
+                    col-md-10 ml-sm-auto px-4 py-4
+                {% else %}
+                    col-md-12 p-0
+                {% endif %}
+              ">
+            {% block content %}{% endblock %}
+        </main>
+
+    </div>
+</div>
+
+
+<!-- JS SCRIPTS -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>
