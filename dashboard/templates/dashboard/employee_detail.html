@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+{% load dashboard_filters %}
+
+{% block title %}Employee Details - HR Analytics{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+
+    {% if not_found %}
+    <div class="alert alert-warning">
+        <strong>Employee Not Found</strong>
+        <p>The employee you are looking for does not exist.</p>
+        <a href="{% url 'dashboard_home' %}" class="btn btn-primary mt-2">Return to Dashboard</a>
+    </div>
+    {% else %}
+
+    <!-- HEADER -->
+    <h1 class="mb-1">Employee Profile: {{ employee.employee_id }}</h1>
+    <p class="text-muted mb-4">Detailed performance and attrition insights</p>
+
+    <div class="row">
+
+        <!-- LEFT COLUMN: Employee Info -->
+        <div class="col-md-4 mb-4">
+            <div class="chart-container">
+                <h5>Employee Information</h5>
+
+                <table class="table table-hover">
+                    <tbody>
+                        <tr><th>Department</th><td>{{ employee.department }}</td></tr>
+                        <tr><th>Job Level</th><td>{{ employee.job_level }}</td></tr>
+                        <tr><th>Hire Date</th><td>{{ employee.hire_date }}</td></tr>
+                        <tr><th>Years Experience</th><td>{{ employee.years_experience|floatformat:1 }}</td></tr>
+                        <tr>
+                            <th>Manager</th>
+                            <td>
+                                {% if employee.manager_id %}
+                                    <a href="{% url 'employee_detail' employee.manager_id %}">
+                                        {{ employee.manager_id }}
+                                    </a>
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- MIDDLE COLUMN: Performance Metrics -->
+        <div class="col-md-4 mb-4">
+            <div class="chart-container">
+                <h5>Performance Metrics</h5>
+
+                <table class="table table-hover">
+                    <tbody>
+                        <tr><th>Performance Score</th><td>{{ employee.performance_score_last_review|floatformat:1 }}/5</td></tr>
+                        <tr><th>Satisfaction</th><td>{{ employee.satisfaction_score|floatformat:1 }}/5</td></tr>
+                        <tr><th>Work-Life Balance</th><td>{{ employee.work_life_balance_score|floatformat:1 }}/5</td></tr>
+                        <tr><th>Communication</th><td>{{ employee.communication_score|floatformat:1 }}/5</td></tr>
+                        <tr><th>Training Completed</th><td>{{ employee.training_completed }}</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Attrition Risk -->
+        {% if attrition_data %}
+        <div class="col-md-4 mb-4">
+            <div class="kpi-card red" style="height: 100%;">
+                <h5>Attrition Risk</h5>
+
+                <h2 class="display-4">{{ attrition_data.attrition_probability|floatformat:2|mul:100 }}%</h2>
+
+                <div class="progress mb-3">
+                    <div class="progress-bar 
+                        {% if attrition_data.risk_level == 'High' %}bg-danger
+                        {% elif attrition_data.risk_level == 'Medium' %}bg-warning
+                        {% else %}bg-success{% endif %}"
+                        style="width: {{ attrition_data.attrition_probability|floatformat:2|mul:100 }}%;">
+                    </div>
+                </div>
+
+                <p><strong>Risk Level: {{ attrition_data.risk_level }}</strong></p>
+
+                {% if attrition_data.risk_level == 'High' %}
+                    <p>Recommend immediate engagement interview.</p>
+                {% elif attrition_data.risk_level == 'Medium' %}
+                    <p>Some concerns detected. Monitor closely.</p>
+                {% else %}
+                    <p>Low attrition risk. No action needed.</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- TIME TRACKING CHART -->
+    {% if time_plot %}
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="chart-container">
+                <h5>Time Tracking History</h5>
+                <div class="chart-box">
+                    {{ time_plot|safe }}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- PROJECT HISTORY -->
+    {% if projects %}
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="chart-container">
+                <h5>Project History</h5>
+
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Project ID</th>
+                                <th>Type</th>
+                                <th>Priority</th>
+                                <th>Start Date</th>
+                                <th>Planned End</th>
+                                <th>Actual End</th>
+                                <th>Status</th>
+                                <th>On Time</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for p in projects %}
+                            <tr>
+                                <td>{{ p.project_id }}</td>
+                                <td>{{ p.project_type }}</td>
+                                <td>
+                                    <span class="badge
+                                        {% if p.priority == 'Critical' %}badge-danger
+                                        {% elif p.priority == 'High' %}badge-warning
+                                        {% elif p.priority == 'Medium' %}badge-primary
+                                        {% else %}badge-secondary{% endif %}">
+                                        {{ p.priority }}
+                                    </span>
+                                </td>
+                                <td>{{ p.start_date }}</td>
+                                <td>{{ p.planned_end_date }}</td>
+                                <td>{{ p.actual_end_date|default:"In Progress" }}</td>
+                                <td>
+                                    {% if p.is_completed %}
+                                        <span class="badge badge-success">Completed</span>
+                                    {% else %}
+                                        <span class="badge badge-info">In Progress</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if p.is_completed %}
+                                        {% if p.on_time %}
+                                            <span class="badge badge-success">Yes</span>
+                                        {% else %}
+                                            <span class="badge badge-danger">No</span>
+                                        {% endif %}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block title %}Run ETL Pipeline - HR Analytics{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <!-- Page header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h3">Run ETL Pipeline</h1>
+            <p class="text-muted">Extract, transform, and load data for analytics</p>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">ETL Pipeline</h5>
+                    <p>The ETL (Extract, Transform, Load) pipeline performs the following operations:</p>
+                    
+                    <ul>
+                        <li>Extracts data from HR systems, time tracking, project management, and survey responses</li>
+                        <li>Transforms raw data into analytics-ready formats</li>
+                        <li>Loads processed data into databases for dashboard use</li>
+                        <li>Generates visualizations for dashboard display</li>
+                    </ul>
+                    
+                    <p>Click the button below to run the ETL pipeline. This may take a few moments.</p>
+                    
+                    <button id="run-etl-btn" class="btn btn-primary">Run ETL Pipeline</button>
+                    
+                    <div id="etl-status" class="mt-3" style="display: none;">
+                        <div class="progress">
+                            <div id="etl-progress" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <p id="etl-message" class="mt-2">Processing data...</p>
+                    </div>
+                    
+                    <div id="etl-result" class="alert mt-3" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">ETL History</h5>
+                    <p>Last run: <span id="last-run">{% now "Y-m-d H:i" %}</span></p>
+                    
+                    <h6 class="mt-4">Data Sources</h6>
+                    <ul>
+                        <li>Employee data (employees.csv)</li>
+                        <li>Time tracking (time_tracking.csv)</li>
+                        <li>Project data (project_data.csv)</li>
+                        <li>Survey responses (survey_responses.csv)</li>
+                    </ul>
+                    
+                    <h6 class="mt-4">Output</h6>
+                    <ul>
+                        <li>Processed datasets in data/processed/</li>
+                        <li>PostgreSQL database for structured data</li>
+                        <li>MongoDB for survey responses</li>
+                        <li>Static visualizations</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const runButton = document.getElementById('run-etl-btn');
+    const statusDiv = document.getElementById('etl-status');
+    const progressBar = document.getElementById('etl-progress');
+    const messageElem = document.getElementById('etl-message');
+    const resultDiv = document.getElementById('etl-result');
+    const lastRunElem = document.getElementById('last-run');
+    
+    runButton.addEventListener('click', function() {
+        // Show status elements
+        statusDiv.style.display = 'block';
+        resultDiv.style.display = 'none';
+        runButton.disabled = true;
+        
+        // Simulate progress
+        let progress = 0;
+        const progressInterval = setInterval(function() {
+            progress += 5;
+            if (progress > 90) {
+                clearInterval(progressInterval);
+            }
+            progressBar.style.width = progress + '%';
+            progressBar.setAttribute('aria-valuenow', progress);
+        }, 500);
+        
+        // Messages
+        const messages = [
+            "Extracting data from sources...",
+            "Transforming employee data...",
+            "Processing time tracking records...",
+            "Analyzing project data...",
+            "Processing survey responses...",
+            "Loading data to databases...",
+            "Generating visualizations...",
+            "Finalizing ETL process..."
+        ];
+        
+        let messageIndex = 0;
+        messageElem.textContent = messages[0];
+        
+        const messageInterval = setInterval(function() {
+            messageIndex++;
+            if (messageIndex >= messages.length) {
+                clearInterval(messageInterval);
+            } else {
+                messageElem.textContent = messages[messageIndex];
+            }
+        }, 1500);
+        
+        // Make AJAX request
+        fetch('{% url "run_etl" %}', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            clearInterval(progressInterval);
+            progressBar.style.width = '100%';
+            progressBar.setAttribute('aria-valuenow', 100);
+            
+            // Update result
+            resultDiv.style.display = 'block';
+            if (data.status === 'success') {
+                resultDiv.className = 'alert alert-success mt-3';
+                resultDiv.textContent = 'ETL pipeline completed successfully!';
+                // Update last run timestamp
+                lastRunElem.textContent = new Date().toLocaleString();
+            } else {
+                resultDiv.className = 'alert alert-danger mt-3';
+                resultDiv.textContent = 'Error: ' + data.message;
+            }
+            
+            // Re-enable button after delay
+            setTimeout(() => {
+                runButton.disabled = false;
+            }, 2000);
+        })
+        .catch(error => {
+            clearInterval(progressInterval);
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'alert alert-danger mt-3';
+            resultDiv.textContent = 'Network error: ' + error.message;
+            runButton.disabled = false;
+        });
+    });
+});
+</script>
+{% endblock %}

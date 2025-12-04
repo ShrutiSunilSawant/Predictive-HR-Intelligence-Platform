@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Productivity Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid mt-4">
+
+    <h1 class="mb-1">Productivity Dashboard</h1>
+    <p class="text-muted mb-4">Monitor productivity trends and workforce workload</p>
+
+    <!-- FILTER -->
+    <form method="get" class="form-inline mb-4">
+        <select name="department" class="form-control">
+            <option value="">All Departments</option>
+            {% for dept in departments_list %}
+            <option value="{{ dept }}" {% if dept == selected_department %}selected{% endif %}>
+                {{ dept }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <button class="btn btn-primary ml-2" type="submit">Filter</button>
+    </form>
+
+    <!-- KPI CARDS -->
+    <div class="row mb-4">
+
+        <div class="col-md-3 mb-3">
+            <div class="kpi-card blue">
+                <h5>PRODUCTIVITY RATIO</h5>
+                <h2 class="display-4">{{ avg_productivity }}%</h2>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="kpi-card green">
+                <h5>AVG WEEKLY HOURS</h5>
+                <h2 class="display-4">{{ avg_hours }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="kpi-card yellow">
+                <h5>PROJECT COMPLETION</h5>
+                <h2 class="display-4">{{ project_completion }}%</h2>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="kpi-card red">
+                <h5>ON-TIME DELIVERY</h5>
+                <h2 class="display-4">{{ on_time_rate }}%</h2>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- CHARTS ROW 1 -->
+    <div class="row">
+
+        <div class="col-md-6 mb-4">
+            <div class="chart-card">
+                <h5 class="chart-title">Weekly Productivity (Median Trends)</h5>
+                <div class="chart-box">
+                    {{ productivity_trend|safe }}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="chart-container">
+                <h5>Productivity by Department</h5>
+                <div class="chart-box">
+                    {{ productivity_by_department|safe }}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- CHARTS ROW 2 -->
+    <div class="row">
+
+        <div class="col-md-12 mb-4">
+            <div class="chart-container">
+                <h5>Weekly Hours Heatmap</h5>
+                <div class="chart-box">
+                    {{ heatmap_plot|safe }}
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

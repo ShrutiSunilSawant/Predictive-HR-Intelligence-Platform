@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% load dashboard_filters %}
+
+{% block title %}Employee Engagement - HR Analytics{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+
+    <!-- PAGE HEADER -->
+    <h1 class="mb-1">Employee Engagement</h1>
+    <p class="text-muted mb-4">Monitor satisfaction scores & survey insights</p>
+
+    <!-- FILTER -->
+    <form method="get" class="form-inline mb-4">
+        <select name="department" class="form-control">
+            <option value="">All Departments</option>
+            {% for dept in departments_list %}
+            <option value="{{ dept }}" {% if selected_department == dept %}selected{% endif %}>
+                {{ dept }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <button class="btn btn-primary ml-2" type="submit">Filter</button>
+    </form>
+
+    <!-- KPI + MAIN CHART -->
+    {% comment %} <div class="row mb-4"> {% endcomment %}
+
+        {% comment %} <!-- SATISFACTION KPI -->
+        <div class="col-md-4 mb-4">
+            <div class="kpi-card green">
+                <h5>Average Satisfaction</h5>
+                <h2 class="display-4">{{ avg_satisfaction }}</h2>
+                <p>Out of 5.0</p>
+
+                <div class="progress mt-3">
+                    <div class="progress-bar bg-success"
+                         role="progressbar"
+                         style="width: {{ avg_satisfaction|floatformat:2|mul:20 }}%;">
+                    </div>
+                </div>
+            </div>
+        </div> {% endcomment %}
+
+        <!-- DEPARTMENT SATISFACTION CHART -->
+        <div class="row mb-4">
+  <!-- LEFT: AVERAGE SATISFACTION KPI (old style) -->
+<div class="col-lg-4 col-md-6 mb-4">
+  <div class="kpi-card green">
+    <h5>AVERAGE SATISFACTION</h5>
+
+    <h2 class="display-4">{{ avg_satisfaction }}</h2>
+    <p>out of 5.0</p>
+
+    <div class="progress mt-3">
+      <div
+        class="progress-bar bg-success"
+        role="progressbar"
+        style="width: {{ avg_satisfaction|floatformat:2|mul:20 }}%;"
+      ></div>
+    </div>
+  </div>
+</div>
+
+  <!-- RIGHT: DEPARTMENT SATISFACTION CHART -->
+  <div class="col-md-6">
+    <div class="card kpi-card">
+      <div class="card-header">
+        <h5 class="mb-0">Department Satisfaction</h5>
+      </div>
+      <div class="card-body chart-container">
+        {% if department_chart %}
+          {{ department_chart|safe }}
+        {% else %}
+          <p class="text-muted mb-0">
+            No department-level satisfaction data available.
+          </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+    <!-- SURVEY BREAKDOWN PLOTLY CHART -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="chart-container">
+                <h5>Survey Response Breakdown</h5>
+                <div class="chart-box">
+                    {% if survey_plot %}
+                        {{ survey_plot|safe }}
+                    {% else %}
+                        <div class="alert alert-info">No survey data available.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QUESTION DETAILS TABLE -->
+    {% if question_scores %}
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <div class="chart-container">
+                <h5>Survey Question Details</h5>
+
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Question</th>
+                                <th>Average Score</th>
+                                <th>Sentiment</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for question in question_scores %}
+                            <tr>
+                                <td>{{ question.question }}</td>
+                                <td>{{ question.numeric_response|floatformat:2 }}</td>
+                                <td>
+                                    {% if question.numeric_response >= 4 %}
+                                        <span class="badge badge-success">Positive</span>
+                                    {% elif question.numeric_response >= 3 %}
+                                        <span class="badge badge-warning">Neutral</span>
+                                    {% else %}
+                                        <span class="badge badge-danger">Concerning</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}
