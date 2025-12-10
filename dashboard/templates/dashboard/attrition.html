@@ -51,7 +51,7 @@
         </div>
     </div>
 
-    <!-- DEPARTMENT RISK -->
+    {% comment %} <!-- DEPARTMENT RISK -->
     <div class="row mb-4">
         <div class="col-md-12">
             <div class="chart-container">
@@ -65,7 +65,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> {% endcomment %}
 
     <!-- HIGH RISK TABLE -->
     {% if high_risk_employees %}
@@ -80,36 +80,38 @@
                             <tr>
                                 <th>Employee ID</th>
                                 <th>Department</th>
-                                <th>Job Level</th>
-                                <th>Tenure (years)</th>
                                 <th>Risk Score</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
 
                         <tbody>
-                            {% for employee in high_risk_employees %}
-                            <tr>
-                                <td>{{ employee.employee_id }}</td>
-                                <td>{{ employee.department }}</td>
-                                <td>{{ employee.job_level }}</td>
-                                <td>{{ employee.tenure|floatformat:1 }}</td>
-                                <td style="width:220px;">
-                                    <div class="progress">
-                                        <div class="progress-bar bg-danger"
-                                             style="width: {{ employee.attrition_probability|floatformat:2|mul:100 }}%;">
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <a href="{% url 'employee_detail' employee.employee_id %}"
-                                       class="btn btn-sm btn-outline-primary">
-                                        Details
-                                    </a>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
+  {% for emp in high_risk_employees %}
+    <tr>
+      <td>{{ emp.employee_id }}</td>
+      <td>{{ emp.department }}</td>
+
+      <!-- RISK SCORE BAR -->
+      <td>
+        <div class="progress risk-progress">
+          <div
+              class="progress-bar bg-danger"
+              role="progressbar"
+              style="width: {{ emp.attrition_probability|floatformat:2|mul:100 }}%;">
+          </div>
+        </div>
+      </td>
+
+      <!-- DETAILS BUTTON -->
+      <td>
+        <a href="{% url 'employee_detail' emp.employee_id %}"
+           class="btn btn-sm btn-outline-light">
+          Details
+        </a>
+      </td>
+    </tr>
+  {% endfor %}
+</tbody>
 
                     </table>
                 </div>
