@@ -71,16 +71,21 @@
             <div class="kpi-card red" style="height: 100%;">
                 <h5>Attrition Risk</h5>
 
-                <h2 class="display-4">{{ attrition_data.attrition_probability|floatformat:2|mul:100 }}%</h2>
+                {# --- Clean, rounded percentage value --- #}
+                {% with attrition_pct=attrition_data.attrition_probability|mul:100 %}
+                    <h2 class="display-4">
+                        {{ attrition_pct|floatformat:1 }}%
+                    </h2>
 
-                <div class="progress mb-3">
-                    <div class="progress-bar 
-                        {% if attrition_data.risk_level == 'High' %}bg-danger
-                        {% elif attrition_data.risk_level == 'Medium' %}bg-warning
-                        {% else %}bg-success{% endif %}"
-                        style="width: {{ attrition_data.attrition_probability|floatformat:2|mul:100 }}%;">
+                    <div class="progress mb-3">
+                        <div class="progress-bar 
+                            {% if attrition_data.risk_level == 'High' %}bg-danger
+                            {% elif attrition_data.risk_level == 'Medium' %}bg-warning
+                            {% else %}bg-success{% endif %}"
+                            style="width: {{ attrition_pct|floatformat:1 }}%;">
+                        </div>
                     </div>
-                </div>
+                {% endwith %}
 
                 <p><strong>Risk Level: {{ attrition_data.risk_level }}</strong></p>
 
